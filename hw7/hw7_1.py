@@ -4,6 +4,7 @@ HW 7-1
 ✔ Каждая группа включает файлы с несколькими расширениями.
 ✔ В исходной папке должны остаться только те файлы, которые не подошли для сортировки.
 """
+
 import os
 import random as rnd
 import shutil
@@ -11,6 +12,7 @@ import string
 from itertools import chain
 
 DUMP_PATH_NAME = 'file_dump_dir'
+DUMP_SIZE = 30
 
 FILE_EXTENSIONS = {'videos': ('.mp4', '.wmv', '.avi', '.mov'),
                    'documents': ('.txt', '.rtf', '.doc', '.odt'),
@@ -22,10 +24,22 @@ def create_full_dump():
     if os.path.exists(DUMP_PATH_NAME):
         shutil.rmtree(DUMP_PATH_NAME)
     os.mkdir(DUMP_PATH_NAME)
-    for _ in range(30):
+    for _ in range(DUMP_SIZE):
         file_name = ''.join(rnd.choices(string.ascii_lowercase, k=rnd.randint(5, 10))) + rnd.choice(extensions)
         with open(os.path.join(DUMP_PATH_NAME, file_name), 'w') as new_file:
             print('Some data', file=new_file)
 
 
+def sort_files(file_dict=FILE_EXTENSIONS, sourse_path: str = DUMP_PATH_NAME):
+    file_list = os.listdir(path=DUMP_PATH_NAME)
+    for dir_name, extensions in file_dict.items():
+        if os.path.exists(dir_name):
+            shutil.rmtree(dir_name)
+        os.mkdir(dir_name)
+        for obj in file_list:
+            if os.path.isfile(os.path.join(sourse_path, obj)) and os.path.splitext(obj)[1] in extensions:
+                os.replace(os.path.join(os.getcwd(), sourse_path, obj), os.path.join(os.getcwd(), dir_name, obj))
+
+
 create_full_dump()
+sort_files()
